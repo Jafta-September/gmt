@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GMT Safety Solutions - Premier Health & Safety Training</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Supabase JS CDN -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+    <!-- Google Maps API - REPLACE YOUR_GOOGLE_MAPS_API_KEY -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&callback=initMapsWrapper&loading=async&defer" async defer></script>
+
+    <style>
+        /* --- CSS Variables & Global Reset --- */
+        :root {
+            --primary-blue: #005A9C; /* Trustworthy Blue */
+            --primary-blue-dark: #004273;
+            --accent-lime: #A2D729; /* Energetic Accent */
+            --accent-lime-dark: #82b01e;
+            --accent-teal: #008080; /* Professional & Calming */
+            --success-green: #28a745;
+            --warning-orange: #fd7e14;
+            --neutral-lightest: #f8f9fa;
+            --neutral-light-gray: #e9ecef;
+            --neutral-medium-gray: #ced4da;
+            --neutral-dark-gray: #6c757d;
+            --text-dark: #212529;
+            --text-light: #ffffff;
+
+            --font-primary: 'Open Sans', sans-serif;
+            --font-headings: 'Montserrat', sans-serif;
+
+            --border-radius-sm: 6px;
+            --border-radius-md: 10px;
+            --box-shadow-light: 0 4px 12px rgba(0, 0, 0, 0.07);
+            --box-shadow-medium: 0 8px 25px rgba(0, 0, 0, 0.1);
+            --transition-speed: 0.3s;
+        }
+
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth; /* Smooth scroll for #links */
+        }
+
+        body {
+            font-family: var(--font-primary);
+            line-height: 1.7;
+            color: var(--text-dark);
+            background-color: var(--neutral-lightest);
+            font-size: 16px;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: var(--font-headings);
+            color: var(--primary-blue);
+            font-weight: 700;
+            line-height: 1.3;
+        }
+        h1 { font-size: clamp(2.2rem, 5vw, 3.5rem); margin-bottom: 0.6em; font-weight: 800;}
+        h2 { font-size: clamp(1.8rem, 4vw, 2.5rem); margin-bottom: 1em; text-align: center;}
+        h3 { font-size: clamp(1.3rem, 3vw, 1.75rem); margin-bottom: 0.5em; color: var(--primary-blue-dark);}
+        h4 { font-size: clamp(1.1rem, 2.5vw, 1.25rem); margin-bottom: 0.5em; color: var(--accent-teal);}
+
+
+        p { margin-bottom: 1.2em; color: var(--neutral-dark-gray); }
+        a { text-decoration: none; color: var(--accent-lime); transition: color var(--transition-speed) ease; }
+        a:hover { color: var(--accent-lime-dark); }
+        ul { list-style: none; }
+        img { max-width: 100%; height: auto; display: block; }
+
+        /* --- Buttons --- */
+        .btn {
+            display: inline-block;
+            padding: 12px 28px;
+            border-radius: var(--border-radius-sm);
+            font-weight: 700;
+            font-family: var(--font-headings);
+            font-size: 0.95rem;
+            text-align: center;
+            transition: all var(--transition-speed) ease;
+            cursor: pointer;
+            border: none;
+            letter-spacing: 0.5px;
+        }
+        .btn-primary {
+            background-color: var(--accent-lime);
+            color: var(--text-dark); /* Dark text on lime for contrast */
+            box-shadow: 0 2px 5px rgba(162,215,41,0.4);
+        }
+        .btn-primary:hover {
+            background-color: var(--accent-lime-dark);
+            color: var(--text-light); /* White text on darker lime */
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(162,215,41,0.5);
+        }
+        .btn-secondary { /* General secondary button */
+            background-color: transparent;
+            color: var(--primary-blue);
+            border: 2px solid var(--primary-blue);
+        }
+        .btn-secondary:hover {
+            background-color: var(--primary-blue);
+            color: var(--text-light);
+            transform: translateY(-2px);
+        }
+        /* Hero-specific secondary button */
+        .btn-hero-secondary {
+            background-color: transparent;
+            color: var(--text-light);
+            border: 2px solid var(--text-light); /* White border */
+        }
+        .btn-hero-secondary:hover {
+            background-color: var(--text-light);
+            color: var(--primary-blue-dark); /* Text color change on hover */
+            transform: translateY(-2px);
+        }
+
+        .btn-small { padding: 8px 18px; font-size: 0.85rem; }
+        .btn i { margin-right: 8px; }
+
+
+        /* --- Header & Navigation --- */
+        header {
+            background-color: var(--text-light);
+            padding: 10px 0; /* Reduced padding slightly for a tighter header */
+            position: sticky;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: var(--box-shadow-light);
+            transition: padding var(--transition-speed) ease;
+        }
+        header.scrolled { padding: 8px 0; } /* Further reduce on scroll */
+
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-container { display: flex; align-items: center; }
+        .logo-container img {
+            height: 60px; /* Increased logo size */
+            margin-right: 0; /* Removed margin as text is gone */
+        }
+
+
+        nav ul { display: flex; align-items: center; }
+        nav ul li { margin-left: 28px; }
+        nav ul li a {
+            font-family: var(--font-headings);
+            font-weight: 500;
+            color: var(--neutral-dark-gray);
+            font-size: 1rem;
+            padding: 10px 5px;
+            position: relative;
+        }
+        nav ul li a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background-color: var(--accent-lime);
+            transition: width var(--transition-speed) ease;
+        }
+        nav ul li a:hover::after,
+        nav ul li a.active::after { width: 100%; }
+        nav ul li a:hover,
+        nav ul li a.active { color: var(--primary-blue); }
+
+        .cart-icon-container {
+            position: relative;
+            cursor: pointer;
+            color: var(--primary-blue);
+        }
+        .cart-icon-container i { font-size: 1.8rem; }
+        .cart-item-count {
+            position: absolute;
+            top: -5px;
+            right: -8px;
+            background-color: var(--warning-orange);
+            color: var(--text-light);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.75rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+        }
+        .menu-toggle { display: none; font-size: 1.8rem; cursor: pointer; color: var(--primary-blue); }
+
+        /* --- Endorsement Badges --- */
+        .endorsement-badges {
+            background-color: var(--neutral-light-gray);
+            padding: 20px 0;
+            text-align: center;
+            border-bottom: 1px solid var(--neutral-medium-gray);
+        }
+        .endorsement-badges .container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .endorsement-badge img {
+            max-height: 60px;
+            max-width: 150px;
+            filter: grayscale(0.7);
+            opacity: 0.8;
+            transition: filter var(--transition-speed) ease, opacity var(--transition-speed) ease, transform var(--transition-speed) ease;
+        }
+        .endorsement-badge img:hover {
+            filter: grayscale(0);
+            opacity: 1;
+            transform: scale(1.05);
+        }
+
+
+        /* --- Sections --- */
+        main section {
+            padding: 80px 0;
+            min-height: 80vh; /* Adjusted for variability, some sections might not need full viewport */
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+        }
+        main section#home {
+            padding-top: 0; /* Hero is part of home, no extra top padding */
+            min-height: auto; /* Home section height is determined by hero + featured courses */
+        }
+        main section.active-section {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .section-header { text-align: center; margin-bottom: 50px; }
+        .section-header .subtitle {
+            font-family: var(--font-primary);
+            color: var(--accent-teal);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+
+        /* --- Hero Section (Home) --- */
+        .hero {
+            background: linear-gradient(rgba(0, 25, 50, 0.45), rgba(0, 10, 20, 0.6)), url('assets/images/hero-background.jpg') no-repeat center center/cover;
+            color: var(--text-light);
+            padding: 100px 0;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            min-height: 75vh;
+        }
+        .hero-content { max-width: 750px; }
+        .hero h1 {
+            color: var(--text-light);
+            font-weight: 800;
+            font-size: clamp(2.8rem, 6.5vw, 4.2rem);
+            margin-bottom: 0.5em;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+        }
+        .hero .hero-subtitle {
+            font-size: clamp(1.1rem, 2.5vw, 1.3rem);
+            margin-bottom: 2.5em;
+            opacity: 0.95;
+            line-height: 1.8;
+            max-width: 650px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.15);
+        }
+        .hero .btn { margin-right: 15px; margin-top: 10px; }
+
+
+        /* --- Course Card Styles --- */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 35px;
+        }
+
+        .course-card {
+            background-color: var(--text-light);
+            border-radius: var(--border-radius-md);
+            box-shadow: var(--box-shadow-light);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+        }
+        .course-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--box-shadow-medium);
+        }
+
+        .course-card__image-container {
+            height: 220px;
+            position: relative;
+            overflow: hidden;
+        }
+        .course-card__image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+        .course-card:hover .course-card__image { transform: scale(1.08); }
+        .course-card__image-container .tag {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background-color: var(--accent-lime);
+            color: var(--text-dark);
+            padding: 5px 12px;
+            border-radius: var(--border-radius-sm);
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .course-card__content { padding: 25px; flex-grow: 1; display: flex; flex-direction: column; }
+        .course-card__title { margin-bottom: 0.5em; color: var(--primary-blue-dark); font-size: 1.4rem;}
+        .course-card__instructor {
+            font-size: 0.85rem;
+            color: var(--neutral-dark-gray);
+            margin-bottom: 1em;
+            display: flex;
+            align-items: center;
+        }
+        .course-card__instructor i { color: var(--accent-teal); margin-right: 6px; }
+
+        .course-card__meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            color: var(--neutral-dark-gray);
+            margin-bottom: 1.2em;
+            border-top: 1px solid var(--neutral-light-gray);
+            padding-top: 1em;
+        }
+        .course-card__meta span { display: flex; align-items: center;}
+        .course-card__meta i { color: var(--accent-teal); margin-right: 6px; font-size: 1.1rem; }
+        .course-card__price { font-weight: 700; font-size: 1.3rem; color: var(--primary-blue); }
+
+        .course-card__description {
+            font-size: 0.9rem;
+            color: var(--neutral-dark-gray);
+            margin-bottom: 1.5em;
+            flex-grow: 1; /* Pushes actions to bottom */
+            line-height: 1.6;
+        }
+
+        .course-card__actions {
+            display: flex;
+            gap: 10px;
+            margin-top: auto; /* Pushes to bottom */
+        }
+        .course-card__actions .btn { flex-grow: 1; }
+
+
+        /* --- About Us Section --- */
+        .about-layout { display: flex; gap: 40px; align-items: center; }
+        .about-layout__text { flex: 1.2; }
+        .about-layout__image-container {
+            flex: 1;
+            border-radius: var(--border-radius-md);
+            overflow: hidden;
+            box-shadow: var(--box-shadow-medium);
+        }
+        .about-layout__image-container img { transition: transform 0.5s ease; }
+        .about-layout__image-container:hover img { transform: scale(1.05); }
+        .about-layout__text ul { padding-left: 20px; margin-bottom: 1.5em; }
+        .about-layout__text li {
+            margin-bottom: 0.8em;
+            color: var(--neutral-dark-gray);
+            position: relative;
+            padding-left: 25px;
+        }
+        .about-layout__text li::before {
+            content: '\f058'; /* Font Awesome check-circle */
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: var(--success-green);
+            position: absolute;
+            left: 0;
+            top: 2px;
+            font-size: 1.1rem;
+        }
+
+
+        /* --- Contact Section --- */
+        .contact-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 40px; }
+        .contact-form .form-group { margin-bottom: 20px; }
+        .contact-form label { display: block; margin-bottom: 6px; font-weight: 600; color: var(--primary-blue); }
+        .contact-form input, .contact-form textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--neutral-medium-gray);
+            border-radius: var(--border-radius-sm);
+            font-size: 1rem;
+            font-family: var(--font-primary);
+            transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+        }
+        .contact-form input:focus, .contact-form textarea:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(0, 90, 156, 0.15);
+        }
+        .contact-form textarea { resize: vertical; min-height: 150px; }
+
+        .contact-info { background-color: var(--text-light); padding: 30px; border-radius: var(--border-radius-md); box-shadow: var(--box-shadow-light); }
+        .contact-info__item { margin-bottom: 20px; display: flex; align-items: flex-start; }
+        .contact-info__item i.fa-map-marker-alt, /* Target only map markers for potential alignment issues */
+        .contact-info__item i.fa-phone-alt,
+        .contact-info__item i.fa-envelope,
+        .contact-info__item i.fa-clock {
+            font-size: 1.5rem; color: var(--accent-teal); margin-right: 15px; margin-top: 3px; width: 25px; text-align: center;
+        }
+        .contact-info__item strong { display: block; font-weight: 700; color: var(--primary-blue-dark); margin-bottom: 3px; }
+        .contact-info__item p { margin-bottom: 0; font-size: 0.95rem; }
+        .map-container {
+            height: 250px;
+            width: 100%;
+            border-radius: var(--border-radius-sm);
+            overflow: hidden;
+            margin-top: 10px;
+            border: 1px solid var(--neutral-light-gray);
+            background-color: var(--neutral-light-gray); /* Placeholder background if map fails */
+        }
+
+
+        /* --- Footer --- */
+        footer {
+            background-color: var(--primary-blue-dark);
+            color: var(--neutral-light-gray);
+            text-align: center;
+            padding: 40px 0;
+            margin-top: 60px;
+        }
+        footer p { color: var(--neutral-light-gray); opacity: 0.8; margin: 0; }
+
+
+        /* --- Modal Styles (IMPROVED FOR SCROLLING) --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity var(--transition-speed) ease, visibility 0s var(--transition-speed) linear;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+            transition-delay: 0s;
+        }
+
+        .modal-dialog {
+            background-color: var(--text-light);
+            padding: 0; /* Padding will be on header/body/footer */
+            border-radius: var(--border-radius-md);
+            width: 90%;
+            max-width: 700px;
+            box-shadow: var(--box-shadow-medium);
+            transform: scale(0.95);
+            transition: transform var(--transition-speed) ease;
+            display: flex;
+            flex-direction: column;
+            max-height: 90vh; /* Crucial for preventing overflow */
+        }
+        .modal-overlay.active .modal-dialog { transform: scale(1); }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 25px;
+            border-bottom: 1px solid var(--neutral-light-gray);
+        }
+        .modal-header h3 { margin-bottom: 0; }
+        .modal-close-btn { background: none; border: none; font-size: 1.8rem; color: var(--neutral-dark-gray); cursor: pointer; padding: 5px;}
+        .modal-close-btn:hover { color: var(--text-dark); }
+
+        .modal-body {
+            padding: 20px 25px;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+        .modal-body::-webkit-scrollbar {
+            width: 8px;
+        }
+        .modal-body::-webkit-scrollbar-thumb {
+            background: var(--neutral-medium-gray);
+            border-radius: 4px;
+        }
+
+        .modal-body img.course-image { width: 100%; max-height: 300px; object-fit: cover; border-radius: var(--border-radius-sm); margin-bottom: 20px; }
+        .modal-body .course-meta-details { display: flex; flex-wrap: wrap; gap: 15px 25px; margin-bottom: 20px; font-size: 0.9rem; }
+        .modal-body .course-meta-details span { display: flex; align-items: center; color: var(--neutral-dark-gray); }
+        .modal-body .course-meta-details i { color: var(--accent-teal); margin-right: 8px; font-size: 1.2rem; }
+        .modal-body .course-price-modal { font-size: 1.8rem; font-weight: 700; color: var(--primary-blue); margin-bottom: 15px; }
+        .modal-body h4 { margin-top: 25px; margin-bottom: 10px;}
+        .modal-body ul { list-style: disc; padding-left: 25px; margin-bottom: 20px; }
+        .modal-body ul li { margin-bottom: 8px; line-height: 1.5; }
+
+        .modal-footer {
+            text-align: right;
+            padding: 20px 25px;
+            border-top: 1px solid var(--neutral-light-gray);
+        }
+
+
+        /* --- Cart Off-Canvas Panel --- */
+        .cart-panel {
+            position: fixed;
+            top: 0;
+            right: -400px; /* Initially off-screen */
+            width: 100%;
+            max-width: 400px;
+            height: 100%;
+            background-color: var(--text-light);
+            box-shadow: -5px 0 20px rgba(0,0,0,0.15);
+            z-index: 2001; /* Above modal overlay if both open */
+            transition: right var(--transition-speed) ease-in-out;
+            display: flex;
+            flex-direction: column;
+        }
+        .cart-panel.active { right: 0; }
+        .cart-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--neutral-light-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .cart-header h3 { margin: 0; color: var(--primary-blue); }
+        .cart-body { padding: 20px; overflow-y: auto; flex-grow: 1; }
+        .cart-item {
+            display: flex;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--neutral-light-gray);
+            gap: 15px;
+        }
+        .cart-item:last-child { border-bottom: none; margin-bottom: 0; }
+        .cart-item img { width: 70px; height: 50px; object-fit: cover; border-radius: var(--border-radius-sm); }
+        .cart-item-details { flex-grow: 1; }
+        .cart-item-details h5 { font-size: 1rem; margin-bottom: 5px; color: var(--primary-blue-dark); }
+        .cart-item-price { font-size: 0.9rem; color: var(--neutral-dark-gray); }
+        .cart-item-remove { background: none; border: none; color: var(--warning-orange); cursor: pointer; font-size: 1.1rem; padding: 5px; }
+        .cart-item-remove:hover { color: red; }
+        .cart-empty-message { text-align: center; color: var(--neutral-dark-gray); margin-top: 30px; }
+        .cart-footer { padding: 20px; border-top: 1px solid var(--neutral-light-gray); }
+        .cart-total { display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: 700; margin-bottom: 20px; }
+        .cart-total span:first-child { color: var(--neutral-dark-gray); }
+        .cart-total span:last-child { color: var(--primary-blue); }
+
+
+        /* --- Responsive Adjustments --- */
+        @media (max-width: 992px) {
+            .menu-toggle { display: block; }
+            nav {
+                position: absolute;
+                top: 100%; /* Position below header */
+                left: 0;
+                width: 100%;
+                background-color: var(--text-light);
+                box-shadow: var(--box-shadow-light);
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.4s ease-in-out;
+            }
+            nav.active { max-height: 500px; /* Adjust as needed */ }
+            nav ul { flex-direction: column; padding: 15px 0; align-items: flex-start; }
+            nav ul li { margin: 10px 20px; width: calc(100% - 40px); }
+            nav ul li a { display: block; width: 100%; padding: 10px 0;}
+            nav ul li a::after { bottom: -5px; } /* Adjust underline position */
+
+            .hero { text-align: center; padding: 80px 0;} /* Center hero content on smaller screens */
+            .hero-content { margin: 0 auto; }
+            .hero .hero-subtitle { max-width: 100%; } /* Allow subtitle to take full width */
+
+            .contact-grid { grid-template-columns: 1fr; }
+            .contact-info { margin-top: 30px; }
+            .about-layout { flex-direction: column; }
+            .about-layout__image-container { margin-top: 30px; width: 80%; margin-left: auto; margin-right: auto;}
+            .endorsement-badges .container { gap: 15px; justify-content: center;} /* Center badges on smaller screens */
+            .endorsement-badge img {max-height: 50px;}
+        }
+         @media (max-width: 576px) {
+            .card-grid { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 1.8rem; }
+            .hero .hero-subtitle { font-size: 1rem; }
+            .btn { padding: 10px 20px; font-size: 0.9rem; }
+            .course-card__actions { flex-direction: column; }
+            .course-card__actions .btn { width: 100%; }
+            .hero .btn { margin-right: 0; margin-bottom: 10px; display: block; width: fit-content; margin-left:auto; margin-right:auto;} /* Stack hero buttons */
+            .hero .btn:last-child { margin-bottom: 0;}
+            .endorsement-badge img {max-height: 40px;}
+            .logo-container img { height: 50px; } /* Slightly smaller logo on very small screens */
+        }
+    </style>
+</head>
+<body>
+
+    <header id="mainHeader">
+        <div class="container">
+            <a href="#home" class="logo-container navigate-link">
+                <img src="assets/images/logo.png" alt="GMT Safety Logo">
+            </a>
+            <button class="menu-toggle" aria-label="Toggle navigation menu"><i class="fas fa-bars"></i></button>
+            <nav id="mainNav">
+                <ul>
+                    <li><a href="#home" class="active navigate-link">Home</a></li>
+                    <li><a href="#courses" class="navigate-link">Courses</a></li>
+                    <li><a href="#services" class="navigate-link">Services</a></li>
+                    <li><a href="#about" class="navigate-link">About Us</a></li>
+                    <li><a href="#contact" class="navigate-link">Contact</a></li>
+                    <li>
+                        <div class="cart-icon-container" id="cartIconContainer">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="cart-item-count" id="cartItemCount">0</span>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="endorsement-badges">
+        <div class="container">
+            <div class="endorsement-badge"><img src="assets/images/badge1.png" alt="Endorsement Badge 1"></div>
+            <div class="endorsement-badge"><img src="assets/images/badge2.png" alt="Endorsement Badge 2"></div>
+            <div class="endorsement-badge"><img src="assets/images/badge3.png" alt="Endorsement Badge 3"></div>
+            <div class="endorsement-badge"><img src="assets/images/badge4.png" alt="Endorsement Badge 4"></div>
+        </div>
+    </div>
+
+    <main>
+        <!-- Home Section -->
+        <section id="home" class="active-section">
+            <div class="hero">
+                <div class="container">
+                    <div class="hero-content">
+                        <h1>Building Safer Workplaces, Together.</h1>
+                        <p class="hero-subtitle">GMT Safety Solutions provides accredited health & safety training and expert consultancy services. Empower your team, ensure compliance, and cultivate a culture of safety excellence.</p>
+                        <a href="#courses" class="btn btn-primary navigate-link"><i class="fas fa-graduation-cap"></i> Explore Our Courses</a>
+                        <a href="#services" class="btn btn-hero-secondary navigate-link" style="margin-left:10px;"><i class="fas fa-concierge-bell"></i> Our Services</a>
+                    </div>
+                </div>
+            </div>
+            <div class="container" style="padding-top: 60px;">
+                 <div class="section-header">
+                    <span class="subtitle">Featured Training</span>
+                    <h2>Invest in Your Team's Safety</h2>
+                </div>
+                <div class="card-grid" id="featuredCoursesGridHome">
+                    <!-- Featured courses will be injected by JS -->
+                    <p>Loading featured courses...</p>
+                </div>
+                 <div style="text-align: center; margin-top: 40px;">
+                     <a href="#courses" class="btn btn-primary navigate-link"><i class="fas fa-th-list"></i> View All Courses</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Courses Section -->
+        <section id="courses">
+            <div class="container">
+                <div class="section-header">
+                    <span class="subtitle">Our Curriculum</span>
+                    <h2>Accredited Health & Safety Courses</h2>
+                     <p style="max-width:700px; margin: 0 auto; color: var(--neutral-dark-gray);">Choose from a wide range of courses designed to meet industry standards and your specific organizational needs. Available online and on-site.</p>
+                </div>
+                <div class="card-grid" id="allCoursesGrid">
+                    <!-- All courses will be injected by JS -->
+                    <p>Loading all courses...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section id="services">
+            <div class="container">
+                 <div class="section-header">
+                    <span class="subtitle">Expert Solutions</span>
+                    <h2>Comprehensive Safety Services</h2>
+                    <p style="max-width:700px; margin: 0 auto; color: var(--neutral-dark-gray);">Beyond training, we offer expert consultancy and support services to help you establish and maintain robust safety management systems.</p>
+                </div>
+                 <div class="card-grid" id="servicesGrid">
+                    <!-- Services will be injected by JS -->
+                    <p>Loading services...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Us Section -->
+        <section id="about">
+            <div class="container">
+                 <div class="section-header">
+                    <span class="subtitle">Who We Are</span>
+                    <h2>Your Trusted Partner in Safety</h2>
+                </div>
+                <div class="about-layout">
+                    <div class="about-layout__text">
+                        <p>GMT Safety Solutions is a premier provider of accredited health and safety training and comprehensive SHEQ consultancy. With years of industry experience, we are dedicated to fostering safer work environments across various sectors.</p>
+                        <p>Our approach is built on expertise, practicality, and a genuine commitment to our clients' success. We believe that a strong safety culture is not just a requirement, but a vital component of a thriving business.</p>
+                        <h4>Our Core Values:</h4>
+                        <ul>
+                            <li><strong>Integrity:</strong> Upholding the highest ethical standards in all our interactions.</li>
+                            <li><strong>Excellence:</strong> Delivering quality training and consultancy that exceeds expectations.</li>
+                            <li><strong>Partnership:</strong> Working collaboratively with clients to achieve their safety goals.</li>
+                            <li><strong>Empowerment:</strong> Equipping individuals and organizations with the knowledge to manage risks effectively.</li>
+                        </ul>
+                        <a href="#contact" class="btn btn-primary navigate-link"><i class="fas fa-handshake"></i> Work With Us</a>
+                    </div>
+                    <div class="about-layout__image-container">
+                        <img src="assets/images/about-gmt.jpg" alt="GMT Safety Team discussion">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact">
+            <div class="container">
+                <div class="section-header">
+                    <span class="subtitle">Get In Touch</span>
+                    <h2>We're Here to Help</h2>
+                    <p style="max-width:700px; margin: 0 auto; color: var(--neutral-dark-gray);">Have questions or ready to discuss your safety needs? Fill out the form below, or contact us directly through our office details.</p>
+                </div>
+                <div class="contact-grid">
+                    <form id="contactForm" class="contact-form">
+                        <div class="form-group">
+                            <label for="name">Full Name</label>
+                            <input type="text" id="name" name="name" required placeholder="e.g., John Doe">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" name="email" required placeholder="e.g., john.doe@example.com">
+                        </div>
+                         <div class="form-group">
+                            <label for="phone">Phone Number (Optional)</label>
+                            <input type="tel" id="phone" name="phone" placeholder="e.g., 012 345 6789">
+                        </div>
+                        <div class="form-group">
+                            <label for="subject">Subject</label>
+                            <input type="text" id="subject" name="subject" required placeholder="e.g., Course Enquiry">
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Your Message</label>
+                            <textarea id="message" name="message" required placeholder="How can we assist you today?"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Send Message</button>
+                    </form>
+                    <div class="contact-info">
+                        <h3>Office Information</h3>
+                        <div id="locationsContainer">
+                            <!-- Locations will be injected here by JS -->
+                            <p>Loading office locations...</p>
+                        </div>
+                        <hr style="margin: 20px 0; border-color: var(--neutral-light-gray);"/>
+                        <div class="contact-info__item">
+                            <i class="fas fa-phone-alt"></i>
+                            <div>
+                                <strong>Phone Lines</strong>
+                                <p id="contactPhone">Loading...</p>
+                            </div>
+                        </div>
+                         <div class="contact-info__item">
+                            <i class="fas fa-envelope"></i>
+                            <div>
+                                <strong>Email Us</strong>
+                                <p id="contactEmail"><a href="mailto:info@gmtsafety.co.za">Loading...</a></p>
+                            </div>
+                        </div>
+                        <div class="contact-info__item">
+                            <i class="fas fa-clock"></i>
+                            <div>
+                                <strong>Business Hours</strong>
+                                <p id="contactHours">Loading...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© <span id="currentYear"></span> GMT Safety Solutions. All Rights Reserved. Professional Safety Training & Consultancy.</p>
+        </div>
+    </footer>
+
+    <!-- Course Details Modal -->
+    <div class="modal-overlay" id="courseDetailsModalOverlay">
+        <div class="modal-dialog" id="courseDetailsModalDialog">
+            <div class="modal-header">
+                <h3 id="modalCourseTitle">Course Title</h3>
+                <button class="modal-close-btn" id="closeCourseModalBtn" aria-label="Close modal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <img src="" alt="Course Image" id="modalCourseImage" class="course-image">
+                <div class="course-meta-details">
+                    <span><i class="fas fa-chalkboard-teacher"></i> Instructor: <strong id="modalCourseInstructor">N/A</strong></span>
+                    <span><i class="fas fa-clock"></i> Duration: <strong id="modalCourseDuration">N/A</strong></span>
+                    <span><i class="fas fa-map-marker-alt"></i> Type: <strong id="modalCourseType">N/A</strong></span>
+                </div>
+                <div class="course-price-modal" id="modalCoursePrice">R0.00</div>
+                <h4>Full Description:</h4>
+                <p id="modalCourseFullDescription">Full course description...</p>
+                <h4>Learning Outcomes:</h4>
+                <ul id="modalCourseOutcomes">
+                    <li>Outcome 1...</li>
+                    <li>Outcome 2...</li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary btn-small" id="closeCourseModalBtnFooter">Close</button>
+                <button class="btn btn-primary" id="modalAddToCartBtn"><i class="fas fa-cart-plus"></i> Add to Cart</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shopping Cart Panel -->
+    <div class="cart-panel" id="cartPanel">
+        <div class="cart-header">
+            <h3>Your Shopping Cart</h3>
+            <button class="modal-close-btn" id="closeCartPanelBtn" aria-label="Close cart"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="cart-body" id="cartItemsContainer">
+            <p class="cart-empty-message">Your cart is currently empty.</p>
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total:</span>
+                <span id="cartTotalAmount">R0.00</span>
+            </div>
+            <button class="btn btn-primary" id="checkoutBtn" style="width:100%;"><i class="fas fa-credit-card"></i> Proceed to Checkout</button>
+        </div>
+    </div>
+
+
+    <script>
+        // --- Supabase Client Initialization ---
+        // !!! REPLACE WITH YOUR ACTUAL SUPABASE URL AND ANON KEY !!!
+        const SUPABASE_URL = 'https://vkbjymcjlvctisskeghu.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZrYmp5bWNqbHZjdGlzc2tlZ2h1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkwMjM5MTQsImV4cCI6MjA2NDU5OTkxNH0.wS8XzlzU5rygq50NfyY1y4JdoTzmfa64w2REea8EyO0';
+        let supabase;
+        try {
+            supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        } catch (error) {
+            console.error("Error initializing Supabase client:", error);
+            alert("Critical error: Could not connect to the data service. Please try again later.");
+        }
+
+        // --- Global variable to store all fetched courses for cart/modal ---
+        let allFetchedCourses = [];
+
+        // --- DOM Elements ---
+        const mainHeader = document.getElementById('mainHeader');
+        const mainNav = document.getElementById('mainNav');
+        const menuToggle = document.querySelector('.menu-toggle');
+        const navLinks = document.querySelectorAll('.navigate-link');
+        const sections = document.querySelectorAll('main section');
+        const featuredCoursesGridHome = document.getElementById('featuredCoursesGridHome');
+        const allCoursesGrid = document.getElementById('allCoursesGrid');
+        const servicesGrid = document.getElementById('servicesGrid');
+        const locationsContainer = document.getElementById('locationsContainer');
+        const contactPhone = document.getElementById('contactPhone');
+        const contactEmail = document.getElementById('contactEmail');
+        const contactHours = document.getElementById('contactHours');
+
+        // Course Modal Elements
+        const courseModalOverlay = document.getElementById('courseDetailsModalOverlay');
+        const modalCourseTitle = document.getElementById('modalCourseTitle');
+        const modalCourseImage = document.getElementById('modalCourseImage');
+        const modalCourseInstructor = document.getElementById('modalCourseInstructor');
+        const modalCourseDuration = document.getElementById('modalCourseDuration');
+        const modalCourseType = document.getElementById('modalCourseType');
+        const modalCoursePrice = document.getElementById('modalCoursePrice');
+        const modalCourseFullDescription = document.getElementById('modalCourseFullDescription');
+        const modalCourseOutcomes = document.getElementById('modalCourseOutcomes');
+        const modalAddToCartBtn = document.getElementById('modalAddToCartBtn');
+        const closeCourseModalBtn = document.getElementById('closeCourseModalBtn');
+        const closeCourseModalBtnFooter = document.getElementById('closeCourseModalBtnFooter');
+
+        // Cart Elements
+        const cartIconContainer = document.getElementById('cartIconContainer');
+        const cartItemCountSpan = document.getElementById('cartItemCount');
+        const cartPanel = document.getElementById('cartPanel');
+        const closeCartPanelBtn = document.getElementById('closeCartPanelBtn');
+        const cartItemsContainer = document.getElementById('cartItemsContainer');
+        const cartTotalAmountSpan = document.getElementById('cartTotalAmount');
+        const checkoutBtn = document.getElementById('checkoutBtn');
+
+        let cart = []; // To store cart items
+
+        // --- Supabase Data Fetching Functions ---
+        async function fetchCoursesFromDB() {
+            if (!supabase) return [];
+            const { data, error } = await supabase
+                .from('courses')
+                .select('*')
+                .order('title', { ascending: true });
+            if (error) {
+                console.error('Error fetching courses:', error.message);
+                return [];
+            }
+            allFetchedCourses = data; // Store all courses globally
+            return data;
+        }
+
+        async function fetchFeaturedCoursesFromDB() {
+            if (!supabase) return [];
+            const { data, error } = await supabase
+                .from('courses')
+                .select('*')
+                .eq('is_featured', true)
+                .limit(3);
+            if (error) {
+                console.error('Error fetching featured courses:', error.message);
+                return [];
+            }
+            return data;
+        }
+
+        async function fetchServicesFromDB() {
+            if (!supabase) return [];
+            const { data, error } = await supabase
+                .from('services')
+                .select('*')
+                .order('title', { ascending: true });
+            if (error) {
+                console.error('Error fetching services:', error.message);
+                return [];
+            }
+            return data;
+        }
+
+        async function fetchLocationsFromDB() {
+            if (!supabase) return [];
+            const { data, error } = await supabase
+                .from('locations')
+                .select('*')
+                .order('office_name'); // Or by a specific order column if you add one
+            if (error) {
+                console.error('Error fetching locations:', error.message);
+                return [];
+            }
+            return data;
+        }
+
+        async function fetchCompanyInfoFromDB() {
+            if (!supabase) return null;
+            const { data, error } = await supabase
+                .from('company_info')
+                .select('*')
+                .limit(1) // Should only be one row
+                .single(); // Returns a single object or null
+            if (error && error.code !== 'PGRST116') { // PGRST116: "Standard error: Rowlevel security" or "Exact one row expected, but 0 rows were found" - treat 0 rows as null not error
+                console.error('Error fetching company info:', error.message);
+                return null;
+            }
+            return data;
+        }
+
+
+        // --- Google Maps Initialization WRAPPER ---
+        // This wrapper ensures that initMaps is called after locations are fetched.
+        let fetchedLocationsData = [];
+        async function initMapsWrapper() {
+            fetchedLocationsData = await fetchLocationsFromDB();
+            initMaps(); // Call the original initMaps
+            populateContactInfo(); // Also populate text-based location info
+        }
+
+        function initMaps() {
+            if (typeof google === 'undefined' || !google.maps || !google.maps.Map) {
+                console.error("Google Maps API not loaded correctly. Check API Key and script tag.");
+                fetchedLocationsData.forEach(loc => {
+                    const mapEl = document.getElementById(loc.map_element_id);
+                    if (mapEl) mapEl.innerHTML = '<p style="text-align:center; padding:20px; color:var(--neutral-dark-gray);">Map could not be loaded.</p>';
+                });
+                return;
+            }
+
+            fetchedLocationsData.forEach(loc => {
+                const mapEl = document.getElementById(loc.map_element_id);
+                if (mapEl && loc.latitude && loc.longitude) {
+                    try {
+                        const map = new google.maps.Map(mapEl, {
+                            center: { lat: parseFloat(loc.latitude), lng: parseFloat(loc.longitude) },
+                            zoom: 13,
+                            disableDefaultUI: true,
+                        });
+                        new google.maps.Marker({
+                            position: { lat: parseFloat(loc.latitude), lng: parseFloat(loc.longitude) },
+                            map: map,
+                            title: loc.office_name
+                        });
+                    } catch(e) {
+                        console.error("Error creating map for:", loc.office_name, e);
+                        mapEl.innerHTML = '<p style="text-align:center; padding:20px; color:var(--neutral-dark-gray);">Map error.</p>';
+                    }
+                } else if (mapEl) {
+                     mapEl.innerHTML = '<p style="text-align:center; padding:20px; color:var(--neutral-dark-gray);">Map data unavailable.</p>';
+                }
+            });
+        }
+
+
+        // --- Core Functions ---
+        function setActiveLink(targetId) {
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${targetId}`) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        function showSection(targetId, skipHistory) {
+            sections.forEach(section => section.classList.remove('active-section'));
+            const activeSection = document.getElementById(targetId);
+            if (activeSection) {
+                activeSection.classList.add('active-section');
+                setActiveLink(targetId);
+                 if (mainNav.classList.contains('active')) {
+                    mainNav.classList.remove('active');
+                    menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+                }
+                if (!skipHistory && window.location.hash !== `#${targetId}`) {
+                    history.pushState({ section: targetId }, null, `#${targetId}`);
+                }
+                setTimeout(() => window.scrollTo(0,0), 50);
+            }
+        }
+
+        function initialSectionLoad() {
+            let targetId = window.location.hash.substring(1);
+            if (!targetId || !document.getElementById(targetId)) {
+                targetId = 'home';
+            }
+            showSection(targetId, true);
+        }
+
+        // --- Course Card Rendering ---
+        function createCourseCardHTML(course) {
+            // Supabase client converts snake_case (image_seed) to camelCase (imageSeed)
+            const imagePath = `assets/images/course-${(course.image_seed || course.imageSeed || 'default').toLowerCase()}.jpg`;
+            return `
+                <article class="course-card" data-course-id="${course.id}">
+                    <div class="course-card__image-container">
+                        <img src="${imagePath}" alt="${course.title}" class="course-card__image">
+                        ${course.type ? `<span class="tag">${course.type}</span>` : ''}
+                    </div>
+                    <div class="course-card__content">
+                        <h3 class="course-card__title">${course.title}</h3>
+                        <p class="course-card__instructor"><i class="fas fa-user-graduate"></i> ${course.instructor || 'Expert Instructor'}</p>
+                        <div class="course-card__meta">
+                            <span><i class="fas fa-stopwatch"></i> ${course.duration || 'N/A'}</span>
+                            <span class="course-card__price">R${Number(course.price).toFixed(2)}</span>
+                        </div>
+                        <p class="course-card__description">${course.short_description || 'Details coming soon.'}</p>
+                        <div class="course-card__actions">
+                            <button class="btn btn-secondary btn-small view-details-btn"><i class="fas fa-info-circle"></i> View Details</button>
+                            <button class="btn btn-primary btn-small add-to-cart-btn"><i class="fas fa-cart-plus"></i> Add to Cart</button>
+                        </div>
+                    </div>
+                </article>
+            `;
+        }
+
+        async function populateCourses() {
+            const featuredCourses = await fetchFeaturedCoursesFromDB();
+            const allCourses = await fetchCoursesFromDB(); // This also populates allFetchedCourses
+
+            if (featuredCoursesGridHome) {
+                if (featuredCourses.length > 0) {
+                    featuredCoursesGridHome.innerHTML = featuredCourses.map(course => createCourseCardHTML(course)).join('');
+                } else {
+                    featuredCoursesGridHome.innerHTML = '<p>No featured courses available at the moment.</p>';
+                }
+            }
+            if (allCoursesGrid) {
+                 if (allCourses.length > 0) {
+                    allCoursesGrid.innerHTML = allCourses.map(course => createCourseCardHTML(course)).join('');
+                } else {
+                    allCoursesGrid.innerHTML = '<p>No courses available at the moment. Please check back later.</p>';
+                }
+            }
+            addCardButtonListeners();
+        }
+
+        // --- Service Card Rendering ---
+        function createServiceCardHTML(service) {
+            const imagePath = service.image_path || `assets/images/service-default.jpg`; // Use DB path or default
+            return `
+                <article class="course-card"> <!-- Reusing course-card styling for consistency -->
+                    <div class="course-card__image-container">
+                        <img src="${imagePath}" alt="${service.title}" class="course-card__image">
+                    </div>
+                    <div class="course-card__content">
+                        <h3 class="course-card__title">${service.title}</h3>
+                        ${service.contact_person_or_department ? `<div class="course-card__instructor"><i class="fas fa-user-tie"></i> ${service.contact_person_or_department}</div>` : ''}
+                        <p class="course-card__description">${service.description || 'More information coming soon.'}</p>
+                        <div class="course-card__actions">
+                            <button class="btn btn-secondary btn-small navigate-to-contact"><i class="fas fa-phone-alt"></i> ${service.call_to_action_text || 'Enquire Now'}</button>
+                        </div>
+                    </div>
+                </article>
+            `;
+        }
+
+        async function populateServices() {
+            const services = await fetchServicesFromDB();
+            if (servicesGrid) {
+                if (services.length > 0) {
+                    servicesGrid.innerHTML = services.map(service => createServiceCardHTML(service)).join('');
+                    document.querySelectorAll('.navigate-to-contact').forEach(btn => {
+                        btn.addEventListener('click', () => showSection('contact'));
+                    });
+                } else {
+                    servicesGrid.innerHTML = '<p>No services listed at the moment. Please check back later.</p>';
+                }
+            }
+        }
+
+        // --- Populate Contact Info ---
+        async function populateContactInfo() {
+            // Locations are already fetched by initMapsWrapper and stored in fetchedLocationsData
+            if (locationsContainer) {
+                if (fetchedLocationsData.length > 0) {
+                    locationsContainer.innerHTML = fetchedLocationsData.map(loc => `
+                        <div class="contact-info__item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <div>
+                                <strong>${loc.office_name}</strong>
+                                <p>${loc.display_details || 'Address not available'}</p>
+                                <div class="map-container" id="${loc.map_element_id}">
+                                    ${!(loc.latitude && loc.longitude) ? '<p style="text-align:center; padding:20px; color:var(--neutral-dark-gray);">Map data unavailable.</p>' : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    locationsContainer.innerHTML = '<p>Office locations are currently unavailable.</p>';
+                }
+            }
+
+            const companyInfo = await fetchCompanyInfoFromDB();
+            if (companyInfo) {
+                if (contactPhone) contactPhone.textContent = `${companyInfo.primary_phone || ''}${companyInfo.secondary_phone ? ` / ${companyInfo.secondary_phone}` : ''}` || 'N/A';
+                if (contactEmail) contactEmail.innerHTML = companyInfo.email ? `<a href="mailto:${companyInfo.email}">${companyInfo.email}</a>` : 'N/A';
+                if (contactHours) contactHours.textContent = companyInfo.business_hours || 'N/A';
+            } else {
+                 if (contactPhone) contactPhone.textContent = 'N/A';
+                 if (contactEmail) contactEmail.innerHTML = 'N/A';
+                 if (contactHours) contactHours.textContent = 'N/A';
+            }
+        }
+
+
+        // --- Helper to add listeners to dynamically created card buttons ---
+        function addCardButtonListeners() {
+            document.querySelectorAll('.view-details-btn').forEach(btn => btn.addEventListener('click', handleViewDetails));
+            document.querySelectorAll('.add-to-cart-btn').forEach(btn => btn.addEventListener('click', handleAddToCartFromCard));
+        }
+
+        // --- Course Details Modal ---
+        function openCourseModal(courseId) {
+            const course = allFetchedCourses.find(c => c.id === courseId); // Use globally fetched courses
+            if (!course) {
+                console.error("Course not found for modal:", courseId);
+                alert("Sorry, course details could not be loaded.");
+                return;
+            }
+
+            modalCourseTitle.textContent = course.title;
+            modalCourseImage.src = `assets/images/course-${(course.image_seed || course.imageSeed || 'default').toLowerCase()}.jpg`;
+            modalCourseImage.alt = course.title;
+            modalCourseInstructor.textContent = course.instructor || 'Expert Instructor';
+            modalCourseDuration.textContent = course.duration || 'N/A';
+            modalCourseType.textContent = course.type || 'N/A';
+            modalCoursePrice.textContent = `R${Number(course.price).toFixed(2)}`;
+            modalCourseFullDescription.textContent = course.full_description || 'Detailed description not available.';
+
+            modalCourseOutcomes.innerHTML = '';
+            if (course.learning_outcomes && Array.isArray(course.learning_outcomes)) {
+                course.learning_outcomes.forEach(outcome => {
+                    const li = document.createElement('li');
+                    li.textContent = outcome;
+                    modalCourseOutcomes.appendChild(li);
+                });
+            } else {
+                modalCourseOutcomes.innerHTML = '<li>Learning outcomes not specified.</li>';
+            }
+
+            modalAddToCartBtn.dataset.courseId = course.id;
+            courseModalOverlay.classList.add('active');
+        }
+        function closeCourseModal() {
+            courseModalOverlay.classList.remove('active');
+        }
+
+        function handleViewDetails(event) {
+            const card = event.target.closest('.course-card');
+            if (card && card.dataset.courseId) {
+                openCourseModal(card.dataset.courseId);
+            }
+        }
+
+        // --- Shopping Cart Functionality ---
+        function loadCartFromStorage() {
+            const storedCart = localStorage.getItem('gmtSafetyCart');
+            if (storedCart) {
+                cart = JSON.parse(storedCart);
+                updateCartDisplay();
+            }
+        }
+        function saveCartToStorage() {
+            localStorage.setItem('gmtSafetyCart', JSON.stringify(cart));
+        }
+
+        function addToCart(courseId) {
+            const course = allFetchedCourses.find(c => c.id === courseId); // Use globally fetched courses
+            if (!course) {
+                console.error("Course not found for cart:", courseId);
+                alert("Sorry, this course could not be added to the cart.");
+                return;
+            }
+
+            const existingItemIndex = cart.findIndex(item => item.id === courseId);
+            if (existingItemIndex > -1) {
+                cart[existingItemIndex].quantity++;
+            } else {
+                // Ensure all necessary fields for the cart are present
+                cart.push({
+                    id: course.id,
+                    title: course.title,
+                    price: course.price,
+                    quantity: 1,
+                    imageSeed: course.image_seed || course.imageSeed // For cart display image
+                });
+            }
+            updateCartDisplay();
+            saveCartToStorage();
+            showCartPanel();
+            // Feedback on button
+            const addButton = document.querySelector(`.course-card[data-course-id="${courseId}"] .add-to-cart-btn`) || (modalAddToCartBtn.dataset.courseId === courseId ? modalAddToCartBtn : null) ;
+            if(addButton) {
+                const originalText = addButton.innerHTML;
+                addButton.innerHTML = '<i class="fas fa-check-circle"></i> Added!';
+                addButton.disabled = true;
+                setTimeout(() => {
+                    addButton.innerHTML = originalText;
+                    addButton.disabled = false;
+                }, 1500);
+            }
+        }
+
+        function handleAddToCartFromCard(event) {
+            const card = event.target.closest('.course-card');
+            if (card && card.dataset.courseId) {
+                addToCart(card.dataset.courseId);
+            }
+        }
+        modalAddToCartBtn.addEventListener('click', () => {
+             if (modalAddToCartBtn.dataset.courseId) {
+                addToCart(modalAddToCartBtn.dataset.courseId);
+                closeCourseModal();
+            }
+        });
+
+
+        function removeFromCart(courseId) {
+            cart = cart.filter(item => item.id !== courseId);
+            updateCartDisplay();
+            saveCartToStorage();
+        }
+
+        function updateCartDisplay() {
+            cartItemCountSpan.textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = '<p class="cart-empty-message">Your cart is currently empty.</p>';
+            } else {
+                cartItemsContainer.innerHTML = cart.map(item => `
+                    <div class="cart-item" data-course-id="${item.id}">
+                        <img src="assets/images/course-${(item.imageSeed || 'default').toLowerCase()}.jpg" alt="${item.title}">
+                        <div class="cart-item-details">
+                            <h5>${item.title}</h5>
+                            <p class="cart-item-price">R${Number(item.price).toFixed(2)} x ${item.quantity}</p>
+                        </div>
+                        <button class="cart-item-remove" aria-label="Remove ${item.title}"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+                `).join('');
+
+                cartItemsContainer.querySelectorAll('.cart-item-remove').forEach(btn => {
+                    btn.addEventListener('click', (event) => {
+                        const cartItemDiv = event.target.closest('.cart-item');
+                        if (cartItemDiv && cartItemDiv.dataset.courseId) {
+                            removeFromCart(cartItemDiv.dataset.courseId);
+                        }
+                    });
+                });
+            }
+
+            const total = cart.reduce((sum, item) => sum + (Number(item.price) * item.quantity), 0);
+            cartTotalAmountSpan.textContent = `R${total.toFixed(2)}`;
+            checkoutBtn.disabled = cart.length === 0;
+        }
+
+        function showCartPanel() { cartPanel.classList.add('active'); }
+        function hideCartPanel() { cartPanel.classList.remove('active'); }
+
+
+        // --- Event Listeners ---
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!supabase) {
+                console.warn("Supabase client not initialized. Dynamic content will not load.");
+                // Optionally display a message to the user on the page
+                featuredCoursesGridHome.innerHTML = '<p>Error: Could not connect to data service.</p>';
+                allCoursesGrid.innerHTML = '<p>Error: Could not connect to data service.</p>';
+                servicesGrid.innerHTML = '<p>Error: Could not connect to data service.</p>';
+                locationsContainer.innerHTML = '<p>Error: Could not connect to data service.</p>';
+                return; // Stop further execution if Supabase isn't available
+            }
+
+            initialSectionLoad();
+            await populateCourses(); // Fetches and renders courses
+            await populateServices(); // Fetches and renders services
+            // populateContactInfo and initMaps are called via initMapsWrapper (Google Maps callback)
+
+            loadCartFromStorage();
+
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    mainHeader.classList.add('scrolled');
+                } else {
+                    mainHeader.classList.remove('scrolled');
+                }
+            });
+
+            menuToggle.addEventListener('click', () => {
+                mainNav.classList.toggle('active');
+                menuToggle.innerHTML = mainNav.classList.contains('active') ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+            });
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    showSection(targetId);
+                });
+            });
+             document.querySelectorAll('.navigate-to-contact').forEach(btn => {
+                btn.addEventListener('click', () => showSection('contact'));
+            });
+
+
+            window.addEventListener('popstate', (event) => {
+                 if (event.state && event.state.section) {
+                    showSection(event.state.section, true);
+                } else {
+                    initialSectionLoad();
+                }
+            });
+
+            const contactForm = document.getElementById('contactForm');
+            if (contactForm) {
+                contactForm.addEventListener('submit', (event) => {
+                    event.preventDefault();
+                    // Here you would typically send data to a backend or serverless function
+                    // For Supabase, you might insert into a 'messages' table if RLS allows anon inserts,
+                    // or use a Supabase Edge Function.
+                    alert('Message sent successfully! (This is a demo and does not actually send emails or save to DB yet)');
+                    contactForm.reset();
+                });
+            }
+
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+            closeCourseModalBtn.addEventListener('click', closeCourseModal);
+            closeCourseModalBtnFooter.addEventListener('click', closeCourseModal);
+            courseModalOverlay.addEventListener('click', (event) => {
+                if (event.target === courseModalOverlay) closeCourseModal();
+            });
+
+            cartIconContainer.addEventListener('click', showCartPanel);
+            closeCartPanelBtn.addEventListener('click', hideCartPanel);
+            checkoutBtn.addEventListener('click', () => {
+                if (cart.length > 0) {
+                    // In a real app, you'd redirect to a payment gateway or order processing page.
+                    // You might send the cart data to a Supabase Edge Function to create an order.
+                    alert('Proceeding to checkout... (This is a demo. No payment will be processed.)');
+                    cart = [];
+                    updateCartDisplay();
+                    saveCartToStorage();
+                    hideCartPanel();
+                } else {
+                    alert('Your cart is empty.');
+                }
+            });
+        });
+
+    </script>
+
+</body>
+</html>
